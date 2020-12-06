@@ -13,16 +13,19 @@
 
 ### CLI
 TBD，可参考代码头部注释
+--help 可以查看可用参数
+
 ### Github Action 运行方法
 - Fork本项目
 - 在项目中打开Settings->Secrets页面
 - 点击“New Secret”创建如下五个新的密码：
-    - AUTH_MODE
-    - USERNAME
-    - PASSWORD
-    - EAI_SESS
-    - UUKEY
-    其中，AUTH_MODE伪认证模式（密码或cookies），依照所选的填写USERNAME/PASSWORD或者EAI_SESS/UUKEY，不需要的留空即可（写个空格或者随意填写）。
+    - AUTH_MODE：认证模式，账号密码方式填写"PASSWORD"，cookies方式填写"COOKIES"（不带引号）  
+    - USERNAME：用户名  
+    - PASSWORD：密码  
+    - EAI_SESS：Cookies之一  
+    - UUKEY：Cookies之一  
+
+    其中，AUTH_MODE为认证模式，即密码（PASSWORD）或cookies（COOKIES），依照所选的填写USERNAME/PASSWORD或者EAI_SESS/UUKEY，不需要的留空即可（写个空格或者随意填写）。两种认证方式只需要选择一种。
     各个参数的意义可以参考前文或代码开头的注释。
 - 启动定时打卡
     进入Actions标签（页面上方），点击该工作流（Auto_Attendance_GitHub_Action），点击Run workflow按钮
