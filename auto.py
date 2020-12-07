@@ -210,6 +210,10 @@ def main(username='',password=''):
         return
     else:
         res = sent_report(cookies=cookies_res)
+        if res=="操作成功":
+            pass
+        else:
+            pass
         #TBD
 
 
@@ -217,7 +221,7 @@ if __name__ == "__main__":
     
     #CLI
     parser = argparse.ArgumentParser(description='Auto report CLI')
-    parser.add_argument('--cli', type=bool, default=True,help="")   #Is call by cli. If false, use settings at the begaining of this file.
+    parser.add_argument('--cli', type=bool, default=False,help="")   #Is call by cli. If false, use settings at the begining of this file.
     parser.add_argument('--auth_mode', type=str, default="PASSWORD",help="")
     parser.add_argument('--username', type=str, default=None,help="")
     parser.add_argument('--password', type=str, default=None,help="")
