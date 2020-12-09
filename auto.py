@@ -30,6 +30,9 @@ debug_mode = False
 #是否在账号密码登陆成功后输出app.nwu.edu.cn认证Cookies（即“COOKIES”认证模式下输入参数）
 is_print_cookies = False
 
+#重试最大次数
+retry_max = 3
+
 
 
 # costum padding for AES-128 (16 byte) (useless)
@@ -194,6 +197,7 @@ def sent_report(cookies):
 def main(username='',password=''):
 
     cookies_res = {}
+    global retry_max
 
     if auth_mode=="PASSWORD":
         print("USE PASSWORD MODE")
@@ -211,10 +215,19 @@ def main(username='',password=''):
     else:
         res = sent_report(cookies=cookies_res)
         if res=="操作成功":
-            pass
+            print("\n[FINAL] 自动填报成功")
+            return
+        elif res=="您已上报过" or res=="未到上报时间":
+            print("\n[FINAL] 还不用填报哦~")
+            return
         else:
-            pass
-        #TBD
+            if retry_max>0:
+                print("Retry "+str(retry_max)+":")
+                retry_max = retry_max-1
+                main()
+            else:
+                print("\n[FINAL] 超过最大重试次数，填报失败！")
+
 
 
 if __name__ == "__main__":
