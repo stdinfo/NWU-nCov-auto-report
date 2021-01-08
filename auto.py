@@ -200,10 +200,10 @@ def main(username='',password=''):
     global retry_max
 
     if auth_mode=="PASSWORD":
-        print("[INFO] USE PASSWORD MODE")
+        print("USE PASSWORD MODE")
         cookies_res = get_cookies(username=stu_id,password=stu_passwd)
     elif auth_mode=="COOKIES":
-        print("[INFO] USE COOKIES MODE")
+        print("USE COOKIES MODE")
         cookies_res = stu_varify_cookies
     else:
         print("[ERROR] Unknow auth mode")
@@ -215,10 +215,10 @@ def main(username='',password=''):
     else:
         res = sent_report(cookies=cookies_res)
         if res=="操作成功":
-            print("\n[SUCCESS] [FINAL] 自动填报成功")
+            print("\n[FINAL] 自动填报成功")
             return
-        elif res=="您已上报过" or res=="未到上报时间":
-            print("\n[SUCCESS] [FINAL] 还不用填报哦~")
+        elif res=="[ERROR] 您已上报过" or res=="未到上报时间":
+            print("\n[FINAL] 还不用填报哦~")
             return
         else:
             if retry_max>0:
