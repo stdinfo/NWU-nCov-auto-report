@@ -38,11 +38,4 @@ jobs:
           UUkey: ${{ secrets.UUKEY }}
         
         run: |
-          if [ -n "${UUkey+1}" ]; then
-            echo "[INFO] Find UUkey in Secret"
-          else
-            echo "[INFO] No UUkey founded in Secret"
-            UUkey=""
-          fi
-
           python3 auto.py --cli=True --auth_mode=$auth_mode --username=$username --password=$password --eai-sess=$eai_sess --UUkey=$UUkey
