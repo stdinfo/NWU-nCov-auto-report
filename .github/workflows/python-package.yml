@@ -8,9 +8,8 @@ on:
   push:
   schedule:
     # Write in UTC+0!
-    # 07:05 everyday in UTC+8, 23:05 everyday in UTC+0
+    # For example, 07:05 everyday in UTC+8 equals 23:05 everyday in UTC+0
     - cron: '10 22,4 * * *'
-    #- cron: '10 4 * * *'
 
 jobs:
   build:
@@ -37,5 +36,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           eai_sess: ${{ secrets.EAI_SESS }}
           UUkey: ${{ secrets.UUKEY }}
+        
+        run: |
+          if ["$UUkey" != ""]; then
+            echo "[INFO] Find UUkey in Secret"
+          else
+            echo "[INFO] No UUkey in Secret"
+            UUkey = ""
+          fi
+
         run: |
           python3 auto.py --cli=True --auth_mode=$auth_mode --username=$username --password=$password --eai-sess=$eai_sess --UUkey=$UUkey
