@@ -45,5 +45,5 @@ jobs:
             UUkey = ""
           fi
 
-        run: |
+        #run: |
           python3 auto.py --cli=True --auth_mode=$auth_mode --username=$username --password=$password --eai-sess=$eai_sess --UUkey=$UUkey
