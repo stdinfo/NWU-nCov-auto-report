@@ -174,17 +174,17 @@ def sent_report(cookies):
     headers = {"Accept":"application/json, text/plain, */*","Content-Type":"application/x-www-form-urlencoded","X-Requested-With":"XMLHttpRequest"}
     # cookies = {"UUkey":"","eai-sess":""}
     params = {
-        "sfzx":"1", #是否正常
-        "tw":"1",   #体温（list）
+        "sfzx":"1", #是否在校
+        "tw":"1",   #体温（list）(0-"Below 36";1-"36-36.5";2-"36.5-36.9";3-"36.9-37.3"; ... , i<=8)
         "area":"陕西省 西安市 长安区",
         "city":"西安市",
         "province":"陕西省",
         "address":"陕西省西安市长安区郭杜街道西北大学南校区学生公寓10号楼西北大学长安校区",
-        "geo_api_info":'{"type":"complete","info":"SUCCESS","status":1,"$Da":"jsonp_687452_","position":{"Q":34.14218,"R":108.87518999999998,"lng":108.87519,"lat":34.14218},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"029","adcode":"610116","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"文苑南路","streetNumber":"11号","country":"中国","province":"陕西省","city":"西安市","district":"长安区","township":"郭杜街道"},"formattedAddress":"陕西省西安市长安区郭杜街道西北大学南校区学生公寓10号楼西北大学长安校区","roads":[],"crosses":[],"pois":[]}',
+        "geo_api_info":'{"type":"complete","info":"SUCCESS","status":1,"$Da":"jsonp_687452_","position":{"Q":34.14218,"R":108.87518999999998,"lng":108.87519,"lat":34.14218},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"029","adcode":"610116","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"文苑南路","streetNumber":"11号","country":"中国","province":"陕西省","city":"西安市","district":"长安区","township":"郭杜街道"},"formattedAddress":"陕西省西安市长安区郭杜街道西北大学南校区学生公寓10号楼西北大学长安校区","roads":[],"crosses":[],"pois":[]}',   #高德SDK返回值
         "sfcyglq":"0",  #是否隔离期
         "sfyzz":"0",    #是否有症状
         "qtqk":"",  #其他情况
-        "ymtys":""  #？？？
+        "ymtys":""  #？？？（可能是一码通颜色，暂无用）
     }
     res = requests.get("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,params=params)
     #print(res.content.decode())
@@ -215,10 +215,10 @@ def main(username='',password=''):
     else:
         res = sent_report(cookies=cookies_res)
         if res=="操作成功":
-            print("\n[FINAL] 自动填报成功")
+            print("\n[INFO] [FINAL] 自动填报成功")
             return
         elif res=="您已上报过" or res=="未到上报时间":
-            print("\n[FINAL] 还不用填报哦~")
+            print("\n[INFO] [FINAL] 还不用填报哦~")
             return
         else:
             if retry_max>0:
@@ -226,7 +226,7 @@ def main(username='',password=''):
                 retry_max = retry_max-1
                 main()
             else:
-                print("\n[FINAL] 超过最大重试次数，填报失败！")
+                print("\n[ERROR] [FINAL] 超过最大重试次数，填报失败！")
 
 
 
@@ -254,5 +254,9 @@ if __name__ == "__main__":
         print("Load Setting in file...")
 
     main()
-    #get_cookies(stu_id,stu_passwd)
-    #get_cookies()
+
+    #可手动调用下方函数获取Cookies (或开启debug_mode也可输出Cookies)
+    """
+    my_cookies = get_cookies(stu_id,stu_passwd)
+    print(my_cookies)
+    """
