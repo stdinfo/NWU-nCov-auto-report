@@ -33,6 +33,36 @@ is_print_cookies = False
 #重试最大次数
 retry_max = 3
 
+#自定义填报参数
+"""
+custom_params中每个元素为一个长度为2的列表，如下：
+    [字段名，要覆盖的值]
+eg.
+custom_params = [
+    ["sfzx","0"]
+]
+"""
+"""
+默认参数及解释如下：
+params = {
+        "sfzx":"1", #是否在校
+        "tw":"1",   #体温（list）(0-"Below 36";1-"36-36.5";2-"36.5-36.9";3-"36.9-37.3"; ... , i<=8)
+        "area":"陕西省 西安市 长安区",
+        "city":"西安市",
+        "province":"陕西省",
+        "address":"陕西省西安市长安区郭杜街道西北大学南校区学生公寓10号楼西北大学长安校区",
+        "geo_api_info":'{"type":"complete","info":"SUCCESS","status":1,"$Da":"jsonp_687452_","position":{"Q":34.14218,"R":108.87518999999998,"lng":108.87519,"lat":34.14218},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"029","adcode":"610116","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"文苑南路","streetNumber":"11号","country":"中国","province":"陕西省","city":"西安市","district":"长安区","township":"郭杜街道"},"formattedAddress":"陕西省西安市长安区郭杜街道西北大学南校区学生公寓10号楼西北大学长安校区","roads":[],"crosses":[],"pois":[]}',   #高德SDK返回值
+        "sfcyglq":"0",  #是否隔离期
+        "sfyzz":"0",    #是否有症状
+        "qtqk":"",  #其他情况
+        "ymtys":""  #不明（可能是一码通颜色，暂无用）
+    }
+"""
+custom_params = [
+
+]
+
+
 
 
 # costum padding for AES-128 (16 byte) (useless)
@@ -170,6 +200,12 @@ def get_cookies(username='2015000001',password='123456abc'):
 
     return cookies_action_3
 
+def modify_report_params(params,change):
+    for line in change:
+        params[line[0]] = line[1]
+
+    return params
+
 def sent_report(cookies):
     headers = {"Accept":"application/json, text/plain, */*","Content-Type":"application/x-www-form-urlencoded","X-Requested-With":"XMLHttpRequest"}
     # cookies = {"UUkey":"","eai-sess":""}
@@ -184,8 +220,9 @@ def sent_report(cookies):
         "sfcyglq":"0",  #是否隔离期
         "sfyzz":"0",    #是否有症状
         "qtqk":"",  #其他情况
-        "ymtys":""  #？？？（可能是一码通颜色，暂无用）
+        "ymtys":""  #不明（可能是一码通颜色，暂无用）
     }
+    params = modify_report_params(params,custom_params)
     res = requests.get("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,params=params)
     #print(res.content.decode())
     json_res = res.json()
@@ -234,12 +271,12 @@ if __name__ == "__main__":
     
     #CLI
     parser = argparse.ArgumentParser(description='Auto report CLI')
-    parser.add_argument('--cli', type=bool, default=False,help="")   #Is call by cli. If false, use settings at the begining of this file.
-    parser.add_argument('--auth_mode', type=str, default="PASSWORD",help="")
-    parser.add_argument('--username', type=str, default=None,help="")
-    parser.add_argument('--password', type=str, default=None,help="")
-    parser.add_argument('--eai-sess', type=str, default=None,help="")
-    parser.add_argument('--UUkey', type=str, default=None,help="")
+    parser.add_argument('--cli', type=bool, default=False,help="是否使用命令行参数")   #Is call by cli. If false, use settings at the begining of this file.
+    parser.add_argument('--auth_mode', type=str, default="PASSWORD",help="认证模式")
+    parser.add_argument('--username', type=str, default=None,help="学工号")
+    parser.add_argument('--password', type=str, default=None,help="统一身份认证密码")
+    parser.add_argument('--eai-sess', type=str, default=None,help="认证Cookies")
+    parser.add_argument('--UUkey', type=str, default=None,help="认证Cookies")
     args = parser.parse_args()
     #print("Inpute：", args)
 
@@ -254,9 +291,3 @@ if __name__ == "__main__":
         print("Load Setting in file...")
 
     main()
-
-    #可手动调用下方函数获取Cookies (或开启debug_mode也可输出Cookies)
-    """
-    my_cookies = get_cookies(stu_id,stu_passwd)
-    print(my_cookies)
-    """

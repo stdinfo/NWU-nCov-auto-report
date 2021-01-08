@@ -40,6 +40,12 @@
     其中，AUTH_MODE为认证模式，即密码（PASSWORD）或cookies（COOKIES）两种方式，依照所选的填写 USERNAME/PASSWORD 或者 EAI_SESS/UUKEY ，不需要的留空即可（写个空格或者随意填写）。两种认证方式只需要选择一种。
     各个参数的意义可以参考前文或代码开头的注释。
     此处配置的信息即便仓库为公开仓库其他人也看不到，日志部分也不会包含任何个人相关信息。上传的Secret会被Github加密保存，只能更新无法查看。
+
+    >UPDATE：  
+    目前经过测试，仅创建使用到的Secret已经不会导致错误，即：  
+        - PASSWORD模式：必须包含AUTH_MODE、USERNAME、PASSWORD三个Secret
+        - COOKIES模式：必须包含AUTH_MODE、EAI_SESS、UUKEY三个Secret
+
 - 启动定时打卡
     进入Actions标签（页面上方），点击该工作流（Auto_Attendance_GitHub_Action），点击Run workflow按钮
     此外，push代码同样会触发该Workflow（只用触发一次即可）
