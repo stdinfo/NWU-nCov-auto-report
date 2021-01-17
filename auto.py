@@ -62,6 +62,8 @@ custom_params = [
 
 ]
 
+#日志，供其他模块查阅
+log = ""
 
 
 
@@ -101,6 +103,7 @@ def encrypt(text,key,iv):
 # Login functions
 def get_cookies(username='2015000001',password='123456abc'):
     #cookies_res = {}
+    global log
 
     ncov_report_url = "https://app.nwu.edu.cn/site/ncov/dailyup"
     auth_server_url = "http://authserver.nwu.edu.cn"
@@ -165,10 +168,12 @@ def get_cookies(username='2015000001',password='123456abc'):
             else:
                 print("登陆失败：",end="  ")
                 print(i.text)
+                log = log + "\n登陆失败：" + i.text
                 fail_flag = 1
     if fail_flag==0:
         #print(action_2.text)
         print("账户密码登陆成功")
+        log = log + "\n账户密码登陆成功"
     else:
         #print("Terminated...")
         return {}
@@ -207,6 +212,8 @@ def modify_report_params(params,change):
     return params
 
 def sent_report(cookies):
+    global log 
+    
     headers = {"Accept":"application/json, text/plain, */*","Content-Type":"application/x-www-form-urlencoded","X-Requested-With":"XMLHttpRequest"}
     # cookies = {"UUkey":"","eai-sess":""}
     params = {
@@ -227,6 +234,7 @@ def sent_report(cookies):
     #print(res.content.decode())
     json_res = res.json()
     print("填报返回结果："+json_res['m'])
+    log = log + "\n" + "填报返回结果："+json_res['m']
 
     return json_res['m']
 
@@ -244,19 +252,19 @@ def main(username='',password=''):
         cookies_res = stu_varify_cookies
     else:
         print("[ERROR] Unknow auth mode")
-        return
+        return "Unknow auth mode"
     
     if len(cookies_res)<=0:
         print("[ERROR] Terminated...")
-        return
+        return "Cookies 无效"
     else:
         res = sent_report(cookies=cookies_res)
         if res=="操作成功":
             print("\n[FINAL] 自动填报成功")
-            return
+            return res
         elif res=="您已上报过" or res=="未到上报时间":
             print("\n[FINAL] 还不用填报哦~")
-            return
+            return res
         else:
             if retry_max>0:
                 print("Retry "+str(retry_max)+":")

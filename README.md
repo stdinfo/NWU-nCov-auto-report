@@ -4,6 +4,11 @@
 如果项目对你有帮助记得Star一下哦~  
 欢迎PR、Issue ~~或者面基~~。
 
+## 网页版（NEW！）
+鉴于部分同学反应Github Action版本不太会使用，觉得麻烦的同学可以[点击此处](http://nwu-auto-report.stdin.info/)跳转网页版，输入账号密码即可自动填报，支持参数自定义。  
+链接地址： http://nwu-auto-report.stdin.info/  
+Note：不希望填写账号密码或者对稳定性要求较高的同学依然建议使用Github Actions版本。
+
 ## Featurs
 - 支持多种运行方式：
     - Github Actions：无需服务器即可免开机定时执行
