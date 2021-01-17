@@ -25,7 +25,7 @@ stu_varify_cookies = {
     }
 
 #调试信息开关
-debug_mode = Ture
+debug_mode = False
 
 #是否在账号密码登陆成功后输出app.nwu.edu.cn认证Cookies（即“COOKIES”认证模式下输入参数）
 is_print_cookies = False
