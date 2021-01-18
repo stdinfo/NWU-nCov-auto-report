@@ -56,6 +56,10 @@ Note：不希望填写账号密码或者对稳定性要求较高的同学依然�
     此外，push代码同样会触发该Workflow（只用触发一次即可）
 - 之后在Action标签中可以查看每一次执行的情况，每次执行点击左侧Build，然后下拉展开“Run app”这个步骤可以查看具体执行结果
 
+#### Github Action 关闭方法
+- 打开Action标签，点击左侧填报的工作流（Auto_Attendance_GitHub_Action）
+- 之后页面中上放搜索框旁的三个点，即可见Disable按钮
+
 ### 内置参数运行
 程序开头Settings aera部分包括各类定义，可直接在此处配置并直接运行程序（默认方式，无需显示添加`--cli=False`参数）  
 
