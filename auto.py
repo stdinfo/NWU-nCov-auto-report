@@ -1,6 +1,7 @@
  # -*- coding:utf-8 -*-
 
 import requests
+import urllib
 #model name: pycryptodome
 from Crypto.Cipher import AES
 import base64
@@ -230,7 +231,9 @@ def sent_report(cookies):
         "ymtys":""  #不明（可能是一码通颜色，暂无用）
     }
     params = modify_report_params(params,custom_params)
-    res = requests.get("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,params=params)
+    params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+    res = requests.post("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,data=params)
+    print(res.url)
     #print(res.content.decode())
     json_res = res.json()
     print("填报返回结果："+json_res['m'])
