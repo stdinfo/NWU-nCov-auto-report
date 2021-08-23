@@ -66,6 +66,11 @@ custom_params = [
 #日志，供其他模块查阅
 log = ""
 
+#代理设置
+use_proxy = False
+proxy_detail = {
+    'http':'127.0.0.1:8080'
+}
 
 
 # costum padding for AES-128 (16 byte) (useless)
@@ -116,7 +121,10 @@ def get_cookies(username='2015000001',password='123456abc'):
         "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36 Edg/83.0.478.58"
     }
 
-    action_1 = requests.get(auth_server_url,headers=headers)
+    if(use_proxy==False):
+        action_1 = requests.get(auth_server_url,headers=headers)
+    else:
+        action_1 = requests.get(auth_server_url,headers=headers,proxies=proxy_detail)
     cookies_init = requests.utils.dict_from_cookiejar(action_1.cookies)
     if debug_mode:
         print(cookies_init)
@@ -156,7 +164,10 @@ def get_cookies(username='2015000001',password='123456abc'):
         print(params)
 
     #return
-    action_2 = requests.post(action_url,params=params,cookies=cookies_init,headers=headers,allow_redirects=False)
+    if(use_proxy==False):
+        action_2 = requests.post(action_url,params=params,cookies=cookies_init,headers=headers,allow_redirects=False)
+    else:
+        action_2 = requests.post(action_url,params=params,cookies=cookies_init,headers=headers,allow_redirects=False,proxies=proxy_detail)
     #print(action_2.text)
     doc = BeautifulSoup(action_2.text, 'html.parser')
     fails = doc.find_all(attrs={"class":"auth_error"})
@@ -186,9 +197,12 @@ def get_cookies(username='2015000001',password='123456abc'):
     #Get UUID and eai-sess
     #finally return this cookies
     params = {
-        "redirect":"https://app.nwu.edu.cn/site/ncov/dailyup"
+        "redirect":ncov_report_url
     }
-    action_3 = requests.get(app_uc_login_url,params=params,cookies=cookies_action_2,headers=headers,allow_redirects=False)
+    if(use_proxy==False):
+        action_3 = requests.get(app_uc_login_url,params=params,cookies=cookies_action_2,headers=headers,allow_redirects=False)
+    else:
+        action_3 = requests.get(app_uc_login_url,params=params,cookies=cookies_action_2,headers=headers,allow_redirects=False,proxies=proxy_detail)
     cookies_action_3 = requests.utils.dict_from_cookiejar(action_3.cookies)
     if debug_mode or is_print_cookies:
         print("Cookies for app:",end="  ")
@@ -197,9 +211,12 @@ def get_cookies(username='2015000001',password='123456abc'):
     #Login to app (CAS)
     cookies_tmp = dict(cookies_action_2 , **cookies_action_3)
     params = {
-        "redirect":"https://app.nwu.edu.cn/site/ncov/dailyup&from=wap"
+        "redirect":ncov_report_url
     }
-    action_4 = requests.get(app_cas_login_url,params=params,cookies=cookies_tmp,headers=headers,allow_redirects=True)
+    if(use_proxy==False):
+        action_4 = requests.get(app_cas_login_url,params=params,cookies=cookies_tmp,headers=headers,allow_redirects=True)
+    else:
+        action_4 = requests.get(app_cas_login_url,params=params,cookies=cookies_tmp,headers=headers,allow_redirects=True,proxies=proxy_detail)
     #cookies_action_4 = requests.utils.dict_from_cookiejar(action_4.cookies)
     #print(cookies_action_4)
     #print(action_4.content)
@@ -232,7 +249,10 @@ def sent_report(cookies):
     }
     params = modify_report_params(params,custom_params)
     params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
-    res = requests.post("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,data=params)
+    if(use_proxy==False):
+        res = requests.post("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,data=params)
+    else:
+        res = requests.post("https://app.nwu.edu.cn/ncov/wap/open-report/save",headers=headers,cookies=cookies,data=params,proxies=proxy_detail)
     #print(res.url)
     #print(res.content.decode())
     json_res = res.json()
@@ -249,7 +269,10 @@ def main(username='',password=''):
 
     if auth_mode=="PASSWORD":
         print("USE PASSWORD MODE")
-        cookies_res = get_cookies(username=stu_id,password=stu_passwd)
+        try:
+            cookies_res = get_cookies(username=stu_id,password=stu_passwd)
+        except:
+            print("[ERROR] Login process crash")
     elif auth_mode=="COOKIES":
         print("USE COOKIES MODE")
         cookies_res = stu_varify_cookies
@@ -259,9 +282,13 @@ def main(username='',password=''):
     
     if len(cookies_res)<=0:
         print("[ERROR] Terminated...")
-        return "Cookies 无效"
+        return "Cookies invalid"
     else:
-        res = sent_report(cookies=cookies_res)
+        res = ""
+        try:
+            res = sent_report(cookies=cookies_res)
+        except:
+            print("[ERROR] Send-report process crash")
         if res=="操作成功":
             print("\n[FINAL] 自动填报成功")
             return res
